@@ -40,7 +40,7 @@ class HomeMainPage extends HookWidget {
               child: const Text('점수 추가'),
             ),
             const Text('점수 시작'),
-            ...scores.value.reversed.map((score) => Text(score.toString())),
+            for (final score in scores.value.reversed) Text(score.toString()),
             const Text('점수 끝'),
           ],
         ),
