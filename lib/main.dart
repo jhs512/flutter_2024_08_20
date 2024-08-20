@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -26,7 +28,8 @@ class HomeMainPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scores = useState(<int>[10, 20, 30]);
+    final random = Random();
+    final scores = useState(<int>[]);
 
     return Scaffold(
       body: Center(
@@ -34,7 +37,8 @@ class HomeMainPage extends HookWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                final newScore = scores.value.last + 10;
+                final newScore = random.nextInt(10) + 1;
+
                 scores.value = [...scores.value, newScore];
               },
               child: const Text('점수 추가'),
@@ -44,7 +48,15 @@ class HomeMainPage extends HookWidget {
               child: SingleChildScrollView(
                 child: Column(
                   children: scores.value.map((score) {
-                    return Text('점수: $score');
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        '점수: $score',
+                        style: const TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    );
                   }).toList(),
                 ),
               ),
