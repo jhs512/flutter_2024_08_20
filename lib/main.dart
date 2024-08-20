@@ -28,18 +28,14 @@ class HomeMainPage extends HookWidget {
   Widget build(BuildContext context) {
     List<int> scores = [10, 20, 30, 40, 50];
 
-    return const Scaffold(
+    return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('점수 시작'),
-            Text('Score: 10'),
-            Text('Score: 20'),
-            Text('Score: 30'),
-            Text('Score: 40'),
-            Text('Score: 50'),
-            Text('점수 끝'),
+            const Text('점수 시작'),
+            ...scores.map((score) => Text('점수: $score')),
+            const Text('점수 끝'),
           ],
         ),
       ),
