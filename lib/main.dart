@@ -48,12 +48,19 @@ class HomeMainPage extends HookWidget {
               child: SingleChildScrollView(
                 child: Column(
                   children: scores.value.map((score) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        '점수: $score',
-                        style: const TextStyle(
-                          fontSize: 20,
+                    return InkWell(
+                      onTap: () {
+                        scores.value = scores.value
+                            .where((element) => element != score)
+                            .toList();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '점수: $score',
+                          style: const TextStyle(
+                            fontSize: 20,
+                          ),
                         ),
                       ),
                     );
