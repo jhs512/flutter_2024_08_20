@@ -30,12 +30,29 @@ class HomeMainPage extends HookWidget {
 
     return Scaffold(
       body: Center(
-        child: GestureDetector(
-            onTap: () {
-              number.value++;
-              print('number : ${number.value}');
-            },
-            child: Text('number : ${number.value}')),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+                onTap: () {
+                  number.value++;
+                  print('number : ${number.value}');
+                },
+                child: Text('number : ${number.value}')),
+            GestureDetector(
+                onTap: () {
+                  number.value++;
+                  print('number : ${number.value}');
+                },
+                child: Text('number : ${number.value}')),
+            GestureDetector(
+                onTap: () {
+                  number.value++;
+                  print('number : ${number.value}');
+                },
+                child: Text('number : ${number.value}')),
+          ],
+        ),
       ),
     );
   }
