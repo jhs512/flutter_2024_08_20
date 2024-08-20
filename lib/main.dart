@@ -26,15 +26,21 @@ class HomeMainPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<int> scores = [10, 20, 30, 40, 50];
+    final scores = useState(<int>[10, 20, 30]);
 
     return Scaffold(
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            ElevatedButton(
+              onPressed: () {
+                final newScore = scores.value.last + 10;
+                scores.value = [...scores.value, newScore];
+              },
+              child: const Text('점수 추가'),
+            ),
             const Text('점수 시작'),
-            ...scores.map((score) => Text('점수: $score')),
+            ...scores.value.map((score) => Text('점수: $score')),
             const Text('점수 끝'),
           ],
         ),
