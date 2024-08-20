@@ -35,14 +35,17 @@ class HomeMainPage extends HookWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            GestureDetector(
-                onTap: () {
-                  number1.value++;
-                },
-                child: Text('number1 : ${number1.value}',
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('number1 : ${number1.value}',
                     style: TextStyle(
                       fontSize: number1.value.toDouble(),
-                    ))),
+                    )),
+                TextButton(onPressed: () {}, child: const Text("+")),
+                TextButton(onPressed: () {}, child: const Text("-")),
+              ],
+            ),
             GestureDetector(
                 onTap: () {
                   number2.value++;
