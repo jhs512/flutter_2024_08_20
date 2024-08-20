@@ -34,13 +34,13 @@ class HomeMainPage extends HookWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                final newScore = scores.value.first + 10;
-                scores.value = [newScore, ...scores.value];
+                final newScore = scores.value.last + 10;
+                scores.value = [...scores.value, newScore];
               },
               child: const Text('점수 추가'),
             ),
             const Text('점수 시작'),
-            ...scores.value.map((score) => Text('점수: $score')),
+            ...scores.value.reversed.map((score) => Text(score.toString())),
             const Text('점수 끝'),
           ],
         ),
