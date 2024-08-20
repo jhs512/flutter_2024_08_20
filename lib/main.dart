@@ -26,9 +26,9 @@ class HomeMainPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final number1 = useState(10);
-    final number2 = useState(10);
-    final number3 = useState(10);
+    final number1 = useState(30);
+    final number2 = useState(30);
+    final number3 = useState(30);
 
     return Scaffold(
       body: Center(
@@ -39,25 +39,25 @@ class HomeMainPage extends HookWidget {
                 onTap: () {
                   number1.value++;
                 },
-                child: Text('number : ${number1.value}',
-                    style: const TextStyle(
-                      fontSize: 30,
+                child: Text('number1 : ${number1.value}',
+                    style: TextStyle(
+                      fontSize: number1.value.toDouble(),
                     ))),
             GestureDetector(
                 onTap: () {
                   number2.value++;
                 },
-                child: Text('number : ${number2.value}',
-                    style: const TextStyle(
-                      fontSize: 30,
+                child: Text('number2 : ${number2.value}',
+                    style: TextStyle(
+                      fontSize: number2.value.toDouble(),
                     ))),
             GestureDetector(
                 onTap: () {
                   number3.value++;
                 },
-                child: Text('number : ${number3.value}',
-                    style: const TextStyle(
-                      fontSize: 30,
+                child: Text('number3 : ${number3.value}',
+                    style: TextStyle(
+                      fontSize: number3.value.toDouble(),
                     ))),
           ],
         ),
