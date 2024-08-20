@@ -35,7 +35,7 @@ class HomeMainPage extends HookWidget {
             ElevatedButton(
               onPressed: () {
                 final newScore = scores.value.last + 10;
-                scores.value = [...scores.value, newScore];
+                scores.value = [...scores.value, newScore, newScore + 10];
               },
               child: const Text('점수 추가'),
             ),
