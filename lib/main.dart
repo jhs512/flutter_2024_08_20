@@ -25,9 +25,14 @@ class HomeMainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    int number = 10;
+
+    return Scaffold(
       body: Center(
-        child: Text('Hello, World!'),
+        child: GestureDetector(onTap: () {
+          number++;
+          print('number : $number');
+        }, child: Text('number : $number')),
       ),
     );
   }
