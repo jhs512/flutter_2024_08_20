@@ -42,26 +42,56 @@ class HomeMainPage extends HookWidget {
                     style: TextStyle(
                       fontSize: number1.value.toDouble(),
                     )),
-                TextButton(onPressed: () {}, child: const Text("+")),
-                TextButton(onPressed: () {}, child: const Text("-")),
+                TextButton(
+                    onPressed: () {
+                      number1.value++;
+                    },
+                    child: const Text("+")),
+                TextButton(
+                    onPressed: () {
+                      number1.value--;
+                    },
+                    child: const Text("-")),
               ],
             ),
-            GestureDetector(
-                onTap: () {
-                  number2.value++;
-                },
-                child: Text('number2 : ${number2.value}',
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('number2 : ${number2.value}',
                     style: TextStyle(
                       fontSize: number2.value.toDouble(),
-                    ))),
-            GestureDetector(
-                onTap: () {
-                  number3.value++;
-                },
-                child: Text('number3 : ${number3.value}',
+                    )),
+                TextButton(
+                    onPressed: () {
+                      number2.value++;
+                    },
+                    child: const Text("+")),
+                TextButton(
+                    onPressed: () {
+                      number2.value--;
+                    },
+                    child: const Text("-")),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('number3 : ${number3.value}',
                     style: TextStyle(
                       fontSize: number3.value.toDouble(),
-                    ))),
+                    )),
+                TextButton(
+                    onPressed: () {
+                      number3.value++;
+                    },
+                    child: const Text("+")),
+                TextButton(
+                    onPressed: () {
+                      number3.value--;
+                    },
+                    child: const Text("-")),
+              ],
+            ),
           ],
         ),
       ),
