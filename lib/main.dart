@@ -26,72 +26,20 @@ class HomeMainPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final number1 = useState(30);
-    final number2 = useState(30);
-    final number3 = useState(30);
+    List<int> scores = [10, 20, 30, 40, 50];
 
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('number1 : ${number1.value}',
-                    style: TextStyle(
-                      fontSize: number1.value.toDouble(),
-                    )),
-                TextButton(
-                    onPressed: () {
-                      number1.value++;
-                    },
-                    child: const Text("+")),
-                TextButton(
-                    onPressed: () {
-                      number1.value--;
-                    },
-                    child: const Text("-")),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('number2 : ${number2.value}',
-                    style: TextStyle(
-                      fontSize: number2.value.toDouble(),
-                    )),
-                TextButton(
-                    onPressed: () {
-                      number2.value++;
-                    },
-                    child: const Text("+")),
-                TextButton(
-                    onPressed: () {
-                      number2.value--;
-                    },
-                    child: const Text("-")),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('number3 : ${number3.value}',
-                    style: TextStyle(
-                      fontSize: number3.value.toDouble(),
-                    )),
-                TextButton(
-                    onPressed: () {
-                      number3.value++;
-                    },
-                    child: const Text("+")),
-                TextButton(
-                    onPressed: () {
-                      number3.value--;
-                    },
-                    child: const Text("-")),
-              ],
-            ),
+            Text('점수 시작'),
+            Text('Score: 10'),
+            Text('Score: 20'),
+            Text('Score: 30'),
+            Text('Score: 40'),
+            Text('Score: 50'),
+            Text('점수 끝'),
           ],
         ),
       ),
