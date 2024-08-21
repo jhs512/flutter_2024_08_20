@@ -22,29 +22,78 @@ class MyApp extends StatelessWidget {
   }
 }
 
+@immutable
 class Score {
   static int lastId = 0;
 
   final int id;
-  int content;
+  final int content;
   final DateTime createdAt;
-  DateTime updatedAt;
+  final DateTime updatedAt;
 
-  Score({
+  const Score({
+    required this.id,
     required this.content,
-  })  : id = ++lastId,
-        createdAt = DateTime.now(),
-        updatedAt = DateTime.now();
+    required this.createdAt,
+    required this.updatedAt,
+  });
 
-  void increment() {
-    content++;
-    updatedAt = DateTime.now();
+  Score increment() {
+    return Score(
+      id: id,
+      content: content + 1,
+      createdAt: createdAt,
+      updatedAt: DateTime.now(),
+    );
   }
 
-  void decrement() {
-    content--;
-    updatedAt = DateTime.now();
+  Score decrement() {
+    return Score(
+      id: id,
+      content: content - 1,
+      createdAt: createdAt,
+      updatedAt: DateTime.now(),
+    );
   }
+}
+
+({
+  List<Score> scores,
+  void Function(int content) addScore,
+  void Function(int id) removeScore,
+  void Function(int id, int delta) editScore,
+}) useScores() {
+  final scores = useState(<Score>[]);
+
+  void addScore(int content) {
+    final newScore = Score(
+      id: ++Score.lastId,
+      content: content,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+    scores.value = [...scores.value, newScore];
+  }
+
+  void removeScore(int id) {
+    scores.value = scores.value.where((score) => score.id != id).toList();
+  }
+
+  void editScore(int id, int delta) {
+    scores.value = scores.value.map((score) {
+      if (score.id == id) {
+        return delta == 1 ? score.increment() : score.decrement();
+      }
+      return score;
+    }).toList();
+  }
+
+  return (
+    scores: scores.value,
+    addScore: addScore,
+    removeScore: removeScore,
+    editScore: editScore,
+  );
 }
 
 class HomeMainPage extends HookWidget {
@@ -52,15 +101,15 @@ class HomeMainPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scores = useState(<Score>[]);
     final sortAsc = useState(true);
-
     final textEditingController = useTextEditingController();
     final focusNode = useFocusNode();
     final scoreFormFieldKey =
         useMemoized(() => GlobalKey<FormFieldState<String>>());
 
-    void addScore() {
+    final scoresResult = useScores(); // useScores 커스텀 훅 사용
+
+    void handleAddScore() {
       if (scoreFormFieldKey.currentState?.validate() == false) {
         focusNode.requestFocus();
         return;
@@ -70,8 +119,7 @@ class HomeMainPage extends HookWidget {
       textEditingController.clear();
       focusNode.requestFocus();
 
-      final newScore = Score(content: newScoreValue); // 새 Score 객체 생성
-      scores.value = [...scores.value, newScore];
+      scoresResult.addScore(newScoreValue);
     }
 
     return Scaffold(
@@ -104,12 +152,12 @@ class HomeMainPage extends HookWidget {
                       return null;
                     },
                     onFieldSubmitted: (value) {
-                      addScore();
+                      handleAddScore();
                     },
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: addScore,
+                  onPressed: handleAddScore,
                   child: const Text('점수 추가'),
                 ),
                 ElevatedButton(
@@ -122,11 +170,11 @@ class HomeMainPage extends HookWidget {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: scores.value.length,
+                itemCount: scoresResult.scores.length,
                 itemBuilder: (context, index) {
                   final displayedScores = sortAsc.value
-                      ? scores.value
-                      : scores.value.reversed.toList();
+                      ? scoresResult.scores
+                      : scoresResult.scores.reversed.toList();
 
                   final score = displayedScores[index];
 
@@ -156,22 +204,19 @@ class HomeMainPage extends HookWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          score.increment(); // 점수 증가 및 수정 날짜 갱신
-                          scores.value = List.from(scores.value);
+                          scoresResult.editScore(score.id, 1); // 점수 증가
                         },
                         child: const Text('+'),
                       ),
                       TextButton(
                         onPressed: () {
-                          score.decrement(); // 점수 감소 및 수정 날짜 갱신
-                          scores.value = List.from(scores.value);
+                          scoresResult.editScore(score.id, -1); // 점수 감소
                         },
                         child: const Text('-'),
                       ),
                       TextButton(
                         onPressed: () {
-                          scores.value = List.from(scores.value)
-                            ..removeAt(index);
+                          scoresResult.removeScore(score.id); // 점수 삭제
                         },
                         child: const Text('삭제'),
                       ),
