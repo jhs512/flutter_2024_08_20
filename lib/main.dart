@@ -54,18 +54,12 @@ class HomeMainPage extends HookWidget {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        InkWell(
-                          onTap: () {
-                            scores.value = List.from(scores.value)
-                              ..removeAt(index);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              '점수: $score',
-                              style: const TextStyle(
-                                fontSize: 20,
-                              ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '점수: $score',
+                            style: const TextStyle(
+                              fontSize: 20,
                             ),
                           ),
                         ),
@@ -87,6 +81,12 @@ class HomeMainPage extends HookWidget {
                               ];
                             },
                             child: const Text('-')),
+                        TextButton(
+                            onPressed: () {
+                              scores.value = List.from(scores.value)
+                                ..removeAt(index);
+                            },
+                            child: const Text('삭제')),
                       ],
                     );
                   }).toList(),
