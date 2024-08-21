@@ -51,19 +51,43 @@ class HomeMainPage extends HookWidget {
                     final index = entry.key;
                     final score = entry.value;
 
-                    return InkWell(
-                      onTap: () {
-                        scores.value = List.from(scores.value)..removeAt(index);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '점수: $score',
-                          style: const TextStyle(
-                            fontSize: 20,
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            scores.value = List.from(scores.value)
+                              ..removeAt(index);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              '점수: $score',
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        TextButton(
+                            onPressed: () {
+                              scores.value = [
+                                ...scores.value.sublist(0, index),
+                                score - 1,
+                                ...scores.value.sublist(index + 1),
+                              ];
+                            },
+                            child: const Text('+')),
+                        TextButton(
+                            onPressed: () {
+                              scores.value = [
+                                ...scores.value.sublist(0, index),
+                                score - 1,
+                                ...scores.value.sublist(index + 1),
+                              ];
+                            },
+                            child: const Text('-')),
+                      ],
                     );
                   }).toList(),
                 ),
