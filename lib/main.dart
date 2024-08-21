@@ -47,12 +47,13 @@ class HomeMainPage extends HookWidget {
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
-                  children: scores.value.map((score) {
+                  children: scores.value.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final score = entry.value;
+
                     return InkWell(
                       onTap: () {
-                        scores.value = scores.value
-                            .where((element) => element != score)
-                            .toList();
+                        scores.value = List.from(scores.value)..removeAt(index);
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
