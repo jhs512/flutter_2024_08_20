@@ -32,7 +32,6 @@ class HomeMainPage extends HookWidget {
 
     final textEditingController = useMemoized(() => TextEditingController());
     final focusNode = useMemoized(() => FocusNode());
-
     final scoreFormFieldKey =
         useMemoized(() => GlobalKey<FormFieldState<String>>());
 
@@ -52,7 +51,6 @@ class HomeMainPage extends HookWidget {
       final newScore = int.parse(textEditingController.text);
       textEditingController.clear();
       focusNode.requestFocus();
-      scoreFormFieldKey.currentState?.didChange('');
 
       scores.value = [...scores.value, newScore];
     }
@@ -66,8 +64,18 @@ class HomeMainPage extends HookWidget {
               children: [
                 SizedBox(
                   width: 200,
-                  child: FormField<String>(
+                  child: TextFormField(
                     key: scoreFormFieldKey,
+                    controller: textEditingController,
+                    focusNode: focusNode,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    decoration: const InputDecoration(
+                      labelText: '점수',
+                      hintText: '점수를 입력하세요.',
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return '숫자를 입력해주세요';
@@ -76,26 +84,8 @@ class HomeMainPage extends HookWidget {
                       }
                       return null;
                     },
-                    builder: (field) {
-                      return TextField(
-                        controller: textEditingController,
-                        focusNode: focusNode,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        decoration: InputDecoration(
-                          labelText: '점수',
-                          hintText: '점수를 입력하세요.',
-                          errorText: field.errorText,
-                        ),
-                        onChanged: (value) {
-                          field.didChange(value);
-                        },
-                        onSubmitted: (value) {
-                          addScore();
-                        },
-                      );
+                    onFieldSubmitted: (value) {
+                      addScore();
                     },
                   ),
                 ),
