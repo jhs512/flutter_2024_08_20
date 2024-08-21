@@ -18,16 +18,18 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const HomeMainPage(),
+      home: HomeMainPage(),
     );
   }
 }
 
 class HomeMainPage extends HookWidget {
-  const HomeMainPage({super.key});
+  HomeMainPage({super.key});
+  int count = 0;
 
   @override
   Widget build(BuildContext context) {
+    print("renderCount : ${count++}");
     final random = Random();
     final scores = useState(<int>[]);
     final sortAsc = useState(true);
