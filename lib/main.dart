@@ -1,6 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 void main() {
@@ -28,7 +27,6 @@ class HomeMainPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final count = useRef(0);
     final scores = useState(<int>[]);
     final sortAsc = useState(true);
 
@@ -37,13 +35,10 @@ class HomeMainPage extends HookWidget {
 
     useEffect(() {
       return () {
-        // 이 부분은 HomeMainPage가 화면에서 사라질 때 자동으로 수행됩니다.
         textEditingController.dispose();
         focusNode.dispose();
       };
     }, []);
-
-    print("renderCount : ${count.value++}");
 
     return Scaffold(
       body: Center(
@@ -58,6 +53,9 @@ class HomeMainPage extends HookWidget {
                       controller: textEditingController,
                       focusNode: focusNode,
                       keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
                       decoration: const InputDecoration(
                         labelText: '점수',
                         hintText: '점수를 입력하세요.',
