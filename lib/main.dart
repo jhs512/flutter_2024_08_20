@@ -58,12 +58,15 @@ class Score {
 }
 
 ({
-  List<Score> scores,
+  bool sortAsc,
+  List<Score> sortedScores,
   void Function(int content) addScore,
   void Function(int id) removeScore,
   void Function(int id, int delta) editScore,
+  void Function() toggleSortOrder,
 }) useScores() {
   final scores = useState(<Score>[]);
+  final sortAsc = useState(true);
 
   void addScore(int content) {
     final newScore = Score(
@@ -88,11 +91,21 @@ class Score {
     }).toList();
   }
 
+  void toggleSortOrder() {
+    sortAsc.value = !sortAsc.value;
+  }
+
+  List<Score> getSortedScores() {
+    return sortAsc.value ? scores.value : scores.value.reversed.toList();
+  }
+
   return (
-    scores: scores.value,
+    sortAsc: sortAsc.value,
+    sortedScores: getSortedScores(),
     addScore: addScore,
     removeScore: removeScore,
     editScore: editScore,
+    toggleSortOrder: toggleSortOrder,
   );
 }
 
@@ -101,13 +114,12 @@ class HomeMainPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sortAsc = useState(true);
     final textEditingController = useTextEditingController();
     final focusNode = useFocusNode();
     final scoreFormFieldKey =
         useMemoized(() => GlobalKey<FormFieldState<String>>());
 
-    final scoresResult = useScores(); // useScores 커스텀 훅 사용
+    final scoresResult = useScores();
 
     void handleAddScore() {
       if (scoreFormFieldKey.currentState?.validate() == false) {
@@ -162,21 +174,17 @@ class HomeMainPage extends HookWidget {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    sortAsc.value = !sortAsc.value;
+                    scoresResult.toggleSortOrder();
                   },
-                  child: Text('${sortAsc.value ? '정순' : '역순'}정렬'),
+                  child: Text('${scoresResult.sortAsc ? '정순' : '역순'}정렬'),
                 ),
               ],
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: scoresResult.scores.length,
+                itemCount: scoresResult.sortedScores.length,
                 itemBuilder: (context, index) {
-                  final displayedScores = sortAsc.value
-                      ? scoresResult.scores
-                      : scoresResult.scores.reversed.toList();
-
-                  final score = displayedScores[index];
+                  final score = scoresResult.sortedScores[index];
 
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -204,19 +212,19 @@ class HomeMainPage extends HookWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          scoresResult.editScore(score.id, 1); // 점수 증가
+                          scoresResult.editScore(score.id, 1);
                         },
                         child: const Text('+'),
                       ),
                       TextButton(
                         onPressed: () {
-                          scoresResult.editScore(score.id, -1); // 점수 감소
+                          scoresResult.editScore(score.id, -1);
                         },
                         child: const Text('-'),
                       ),
                       TextButton(
                         onPressed: () {
-                          scoresResult.removeScore(score.id); // 점수 삭제
+                          scoresResult.removeScore(score.id);
                         },
                         child: const Text('삭제'),
                       ),
