@@ -95,59 +95,57 @@ class HomeMainPage extends HookWidget {
               ],
             ),
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: (sortAsc.value
-                          ? scores.value
-                          : scores.value.reversed.toList())
-                      .asMap()
-                      .entries
-                      .map((entry) {
-                    final index = entry.key;
-                    final score = entry.value;
+              // ListView.builder 사용
+              child: ListView.builder(
+                itemCount: scores.value.length,
+                itemBuilder: (context, index) {
+                  final displayedScores = sortAsc.value
+                      ? scores.value
+                      : scores.value.reversed.toList();
 
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '점수: $score',
-                            style: const TextStyle(
-                              fontSize: 20,
-                            ),
+                  final score = displayedScores[index];
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '점수: $score',
+                          style: const TextStyle(
+                            fontSize: 20,
                           ),
                         ),
-                        TextButton(
-                            onPressed: () {
-                              scores.value = [
-                                ...scores.value.sublist(0, index),
-                                score + 1,
-                                ...scores.value.sublist(index + 1),
-                              ];
-                            },
-                            child: const Text('+')),
-                        TextButton(
-                            onPressed: () {
-                              scores.value = [
-                                ...scores.value.sublist(0, index),
-                                score - 1,
-                                ...scores.value.sublist(index + 1),
-                              ];
-                            },
-                            child: const Text('-')),
-                        TextButton(
-                            onPressed: () {
-                              scores.value = List.from(scores.value)
-                                ..removeAt(index);
-                            },
-                            child: const Text('삭제')),
-                      ],
-                    );
-                  }).toList(),
-                ),
+                      ),
+                      TextButton(
+                          onPressed: () {
+                            scores.value = [
+                              ...scores.value.sublist(0, index),
+                              score + 1,
+                              ...scores.value.sublist(index + 1),
+                            ];
+                          },
+                          child: const Text('+')),
+                      TextButton(
+                          onPressed: () {
+                            scores.value = [
+                              ...scores.value.sublist(0, index),
+                              score - 1,
+                              ...scores.value.sublist(index + 1),
+                            ];
+                          },
+                          child: const Text('-')),
+                      TextButton(
+                          onPressed: () {
+                            scores.value = List.from(scores.value)
+                              ..removeAt(index);
+                          },
+                          child: const Text('삭제')),
+                    ],
+                  );
+                },
               ),
-            )
+            ),
           ],
         ),
       ),
