@@ -31,7 +31,9 @@ class HomeMainPage extends HookWidget {
     final count = useRef(0);
 
     print("renderCount : ${count.value++}");
-    final random = Random();
+    final random = useMemoized(() {
+      return Random();
+    });
     final scores = useState(<int>[]);
     final sortAsc = useState(true);
 
