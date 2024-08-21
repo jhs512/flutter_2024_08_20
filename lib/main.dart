@@ -22,12 +22,37 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class Score {
+  static int lastId = 0;
+
+  final int id;
+  int content;
+  final DateTime createdAt;
+  DateTime updatedAt;
+
+  Score({
+    required this.content,
+  })  : id = ++lastId,
+        createdAt = DateTime.now(),
+        updatedAt = DateTime.now();
+
+  void increment() {
+    content++;
+    updatedAt = DateTime.now();
+  }
+
+  void decrement() {
+    content--;
+    updatedAt = DateTime.now();
+  }
+}
+
 class HomeMainPage extends HookWidget {
   const HomeMainPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final scores = useState(<int>[]);
+    final scores = useState(<Score>[]);
     final sortAsc = useState(true);
 
     final textEditingController = useTextEditingController();
@@ -41,10 +66,11 @@ class HomeMainPage extends HookWidget {
         return;
       }
 
-      final newScore = int.parse(textEditingController.text);
+      final newScoreValue = int.parse(textEditingController.text);
       textEditingController.clear();
       focusNode.requestFocus();
 
+      final newScore = Score(content: newScoreValue); // 새 Score 객체 생성
       scores.value = [...scores.value, newScore];
     }
 
@@ -95,7 +121,6 @@ class HomeMainPage extends HookWidget {
               ],
             ),
             Expanded(
-              // ListView.builder 사용
               child: ListView.builder(
                 itemCount: scores.value.length,
                 itemBuilder: (context, index) {
@@ -110,37 +135,46 @@ class HomeMainPage extends HookWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '점수: $score',
-                          style: const TextStyle(
-                            fontSize: 20,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'ID: ${score.id} 점수: ${score.content}',
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                            Text(
+                              '생성: ${score.createdAt} 수정: ${score.updatedAt}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       TextButton(
-                          onPressed: () {
-                            scores.value = [
-                              ...scores.value.sublist(0, index),
-                              score + 1,
-                              ...scores.value.sublist(index + 1),
-                            ];
-                          },
-                          child: const Text('+')),
+                        onPressed: () {
+                          score.increment(); // 점수 증가 및 수정 날짜 갱신
+                          scores.value = List.from(scores.value);
+                        },
+                        child: const Text('+'),
+                      ),
                       TextButton(
-                          onPressed: () {
-                            scores.value = [
-                              ...scores.value.sublist(0, index),
-                              score - 1,
-                              ...scores.value.sublist(index + 1),
-                            ];
-                          },
-                          child: const Text('-')),
+                        onPressed: () {
+                          score.decrement(); // 점수 감소 및 수정 날짜 갱신
+                          scores.value = List.from(scores.value);
+                        },
+                        child: const Text('-'),
+                      ),
                       TextButton(
-                          onPressed: () {
-                            scores.value = List.from(scores.value)
-                              ..removeAt(index);
-                          },
-                          child: const Text('삭제')),
+                        onPressed: () {
+                          scores.value = List.from(scores.value)
+                            ..removeAt(index);
+                        },
+                        child: const Text('삭제'),
+                      ),
                     ],
                   );
                 },
