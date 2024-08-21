@@ -30,17 +30,10 @@ class HomeMainPage extends HookWidget {
     final scores = useState(<int>[]);
     final sortAsc = useState(true);
 
-    final textEditingController = useMemoized(() => TextEditingController());
-    final focusNode = useMemoized(() => FocusNode());
+    final textEditingController = useTextEditingController();
+    final focusNode = useFocusNode();
     final scoreFormFieldKey =
         useMemoized(() => GlobalKey<FormFieldState<String>>());
-
-    useEffect(() {
-      return () {
-        textEditingController.dispose();
-        focusNode.dispose();
-      };
-    }, []);
 
     void addScore() {
       if (scoreFormFieldKey.currentState?.validate() == false) {
