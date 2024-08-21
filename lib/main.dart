@@ -29,13 +29,12 @@ class HomeMainPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final count = useRef(0);
-
-    print("renderCount : ${count.value++}");
-    final random = useMemoized(() {
-      return Random();
-    });
     final scores = useState(<int>[]);
     final sortAsc = useState(true);
+
+    final textEditingController = TextEditingController();
+
+    print("renderCount : ${count.value++}");
 
     return Scaffold(
       body: Center(
@@ -44,18 +43,28 @@ class HomeMainPage extends HookWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(
+                SizedBox(
                     width: 200,
                     child: TextField(
+                      controller: textEditingController,
                       keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: '점수',
                         hintText: '점수를 입력하세요.',
                       ),
                     )),
                 ElevatedButton(
                   onPressed: () {
-                    final newScore = random.nextInt(10) + 1;
+                    if (textEditingController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('점수를 입력하세요.'),
+                        ),
+                      );
+                      return;
+                    }
+
+                    final newScore = int.parse(textEditingController.text);
 
                     scores.value = [...scores.value, newScore];
                   },
