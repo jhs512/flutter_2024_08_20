@@ -33,6 +33,9 @@ class HomeMainPage extends HookWidget {
     final textEditingController = useMemoized(() => TextEditingController());
     final focusNode = useMemoized(() => FocusNode());
 
+    final scoreFormFieldKey =
+        useMemoized(() => GlobalKey<FormFieldState<String>>());
+
     useEffect(() {
       return () {
         textEditingController.dispose();
@@ -41,18 +44,15 @@ class HomeMainPage extends HookWidget {
     }, []);
 
     void addScore() {
-      if (textEditingController.text.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('점수를 입력하세요.'),
-          ),
-        );
+      if (scoreFormFieldKey.currentState?.validate() == false) {
+        focusNode.requestFocus();
         return;
       }
 
       final newScore = int.parse(textEditingController.text);
       textEditingController.clear();
       focusNode.requestFocus();
+      scoreFormFieldKey.currentState?.didChange('');
 
       scores.value = [...scores.value, newScore];
     }
@@ -65,24 +65,42 @@ class HomeMainPage extends HookWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                    width: 200,
-                    child: TextField(
-                      controller: textEditingController,
-                      focusNode: focusNode,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      decoration: const InputDecoration(
-                        labelText: '점수',
-                        hintText: '점수를 입력하세요.',
-                      ),
-                      onSubmitted: (value) {
-                        addScore(); // 엔터 키가 눌리면 점수 추가
-                      },
-                    )),
+                  width: 200,
+                  child: FormField<String>(
+                    key: scoreFormFieldKey,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '숫자를 입력해주세요';
+                      } else if (int.tryParse(value) == null) {
+                        return '유효한 숫자를 입력해주세요';
+                      }
+                      return null;
+                    },
+                    builder: (field) {
+                      return TextField(
+                        controller: textEditingController,
+                        focusNode: focusNode,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        decoration: InputDecoration(
+                          labelText: '점수',
+                          hintText: '점수를 입력하세요.',
+                          errorText: field.errorText,
+                        ),
+                        onChanged: (value) {
+                          field.didChange(value);
+                        },
+                        onSubmitted: (value) {
+                          addScore();
+                        },
+                      );
+                    },
+                  ),
+                ),
                 ElevatedButton(
-                  onPressed: addScore, // 버튼 눌러서 점수 추가
+                  onPressed: addScore,
                   child: const Text('점수 추가'),
                 ),
                 ElevatedButton(
