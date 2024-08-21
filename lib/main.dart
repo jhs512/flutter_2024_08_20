@@ -44,6 +44,15 @@ class HomeMainPage extends HookWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const SizedBox(
+                    width: 200,
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: '점수',
+                        hintText: '점수를 입력하세요.',
+                      ),
+                    )),
                 ElevatedButton(
                   onPressed: () {
                     final newScore = random.nextInt(10) + 1;
