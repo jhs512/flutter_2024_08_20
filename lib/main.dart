@@ -32,7 +32,16 @@ class HomeMainPage extends HookWidget {
     final scores = useState(<int>[]);
     final sortAsc = useState(true);
 
-    final textEditingController = TextEditingController();
+    final textEditingController = useMemoized(() => TextEditingController());
+    final focusNode = useMemoized(() => FocusNode());
+
+    useEffect(() {
+      return () {
+        // 이 부분은 HomeMainPage가 화면에서 사라질 때 자동으로 수행됩니다.
+        textEditingController.dispose();
+        focusNode.dispose();
+      };
+    }, []);
 
     print("renderCount : ${count.value++}");
 
@@ -47,6 +56,7 @@ class HomeMainPage extends HookWidget {
                     width: 200,
                     child: TextField(
                       controller: textEditingController,
+                      focusNode: focusNode,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
                         labelText: '점수',
@@ -65,6 +75,8 @@ class HomeMainPage extends HookWidget {
                     }
 
                     final newScore = int.parse(textEditingController.text);
+                    textEditingController.clear();
+                    focusNode.requestFocus();
 
                     scores.value = [...scores.value, newScore];
                   },
