@@ -40,6 +40,23 @@ class HomeMainPage extends HookWidget {
       };
     }, []);
 
+    void addScore() {
+      if (textEditingController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('점수를 입력하세요.'),
+          ),
+        );
+        return;
+      }
+
+      final newScore = int.parse(textEditingController.text);
+      textEditingController.clear();
+      focusNode.requestFocus();
+
+      scores.value = [...scores.value, newScore];
+    }
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -60,24 +77,12 @@ class HomeMainPage extends HookWidget {
                         labelText: '점수',
                         hintText: '점수를 입력하세요.',
                       ),
+                      onSubmitted: (value) {
+                        addScore(); // 엔터 키가 눌리면 점수 추가
+                      },
                     )),
                 ElevatedButton(
-                  onPressed: () {
-                    if (textEditingController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('점수를 입력하세요.'),
-                        ),
-                      );
-                      return;
-                    }
-
-                    final newScore = int.parse(textEditingController.text);
-                    textEditingController.clear();
-                    focusNode.requestFocus();
-
-                    scores.value = [...scores.value, newScore];
-                  },
+                  onPressed: addScore, // 버튼 눌러서 점수 추가
                   child: const Text('점수 추가'),
                 ),
                 ElevatedButton(
@@ -116,7 +121,7 @@ class HomeMainPage extends HookWidget {
                             onPressed: () {
                               scores.value = [
                                 ...scores.value.sublist(0, index),
-                                score - 1,
+                                score + 1,
                                 ...scores.value.sublist(index + 1),
                               ];
                             },
