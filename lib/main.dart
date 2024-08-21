@@ -30,24 +30,40 @@ class HomeMainPage extends HookWidget {
   Widget build(BuildContext context) {
     final random = Random();
     final scores = useState(<int>[]);
+    final sortAsc = useState(true);
 
     return Scaffold(
       body: Center(
         child: Column(
           children: [
-            ElevatedButton(
-              onPressed: () {
-                final newScore = random.nextInt(10) + 1;
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    final newScore = random.nextInt(10) + 1;
 
-                scores.value = [...scores.value, newScore];
-              },
-              child: const Text('점수 추가'),
+                    scores.value = [...scores.value, newScore];
+                  },
+                  child: const Text('점수 추가'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    sortAsc.value = !sortAsc.value;
+                  },
+                  child: Text('${sortAsc.value ? '정순' : '역순'}정렬'),
+                ),
+              ],
             ),
-            const Text('점수 시작'),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
-                  children: scores.value.asMap().entries.map((entry) {
+                  children: (sortAsc.value
+                          ? scores.value
+                          : scores.value.reversed.toList())
+                      .asMap()
+                      .entries
+                      .map((entry) {
                     final index = entry.key;
                     final score = entry.value;
 
@@ -92,8 +108,7 @@ class HomeMainPage extends HookWidget {
                   }).toList(),
                 ),
               ),
-            ),
-            const Text('점수 끝'),
+            )
           ],
         ),
       ),
