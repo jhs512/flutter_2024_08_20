@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends HookWidget {
@@ -16,11 +19,11 @@ class MyApp extends HookWidget {
           routes: [
             GoRoute(
                 path: '/',
-                builder: (context, state) => const ScoreListPage(),
+                builder: (context, state) => const HomePage(),
                 routes: [
                   GoRoute(
                     path: 'scores',
-                    builder: (context, state) => const HomePage(),
+                    builder: (context, state) => const ScoreListPage(),
                   )
                 ])
           ],
@@ -50,7 +53,7 @@ class HomePage extends HookWidget {
         child: ElevatedButton(
           onPressed: () {
             // 버튼을 눌렀을 때 '/scores' 페이지로 이동
-            context.go('/');
+            context.go('/scores');
           },
           child: const Text('점수 리스트 페이지로 이동'),
         ),
@@ -179,11 +182,6 @@ class ScoreListPage extends HookWidget {
       body: Center(
         child: Column(
           children: [
-            TextButton(
-                onPressed: () {
-                  context.go('/scores');
-                },
-                child: const Text('홈으로 이동')),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
