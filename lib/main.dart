@@ -17,7 +17,31 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const HomeMainPage(),
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends HookWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return const ScoreListPage();
+                },
+              ),
+            );
+          },
+          child: const Text('점수 리스트 페이지로 이동'),
+        ),
+      ),
     );
   }
 }
@@ -109,8 +133,8 @@ class Score {
   );
 }
 
-class HomeMainPage extends HookWidget {
-  const HomeMainPage({super.key});
+class ScoreListPage extends HookWidget {
+  const ScoreListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
