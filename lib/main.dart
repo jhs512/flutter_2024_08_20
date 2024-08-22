@@ -15,13 +15,14 @@ class MyApp extends HookWidget {
     final router = useMemoized(() => GoRouter(
           routes: [
             GoRoute(
-              path: '/',
-              builder: (context, state) => const HomePage(),
-            ),
-            GoRoute(
-              path: '/scores',
-              builder: (context, state) => const ScoreListPage(),
-            )
+                path: '/',
+                builder: (context, state) => const HomePage(),
+                routes: [
+                  GoRoute(
+                    path: 'scores',
+                    builder: (context, state) => const ScoreListPage(),
+                  )
+                ])
           ],
         ));
 
