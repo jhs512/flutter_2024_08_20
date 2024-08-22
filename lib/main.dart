@@ -1,23 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends HookWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final router = useMemoized(() => GoRouter(
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (context, state) => const HomePage(),
+            ),
+            GoRoute(
+              path: '/scores',
+              builder: (context, state) => const ScoreListPage(),
+            )
+          ],
+        ));
+
+    return MaterialApp.router(
+      routerConfig: router,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const HomePage(),
     );
   }
 }
@@ -28,16 +42,14 @@ class HomePage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('홈'),
+      ),
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return const ScoreListPage();
-                },
-              ),
-            );
+            // 버튼을 눌렀을 때 '/scores' 페이지로 이동
+            context.go('/scores');
           },
           child: const Text('점수 리스트 페이지로 이동'),
         ),
@@ -81,6 +93,7 @@ class Score {
   }
 }
 
+// useScores Hook을 정의
 ({
   bool sortAsc,
   List<Score> sortedScores,
@@ -159,6 +172,9 @@ class ScoreListPage extends HookWidget {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('점수 리스트'),
+      ),
       body: Center(
         child: Column(
           children: [
