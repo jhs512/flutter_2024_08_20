@@ -24,6 +24,14 @@ class MyApp extends HookWidget {
                   GoRoute(
                     path: 'scores',
                     builder: (context, state) => const ScoreListPage(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        builder: (context, state) => ScoreDetailPage(
+                          id: int.parse(state.pathParameters['id']!),
+                        ),
+                      ),
+                    ],
                   )
                 ])
           ],
@@ -52,7 +60,6 @@ class HomePage extends HookWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            // 버튼을 눌렀을 때 '/scores' 페이지로 이동
             context.go('/scores');
           },
           child: const Text('점수 리스트 페이지로 이동'),
@@ -103,7 +110,6 @@ class ScoresNotifier extends Notifier<List<Score>> {
     return [];
   }
 
-  // 점수 추가 메서드
   void addScore(int content) {
     final newScore = Score(
       id: ++Score.lastId,
@@ -114,12 +120,10 @@ class ScoresNotifier extends Notifier<List<Score>> {
     state = [...state, newScore];
   }
 
-  // 점수 제거 메서드
   void removeScore(int id) {
     state = state.where((score) => score.id != id).toList();
   }
 
-  // 점수 수정 메서드
   void editScore(int id, int delta) {
     state = state.map((score) {
       if (score.id == id) {
@@ -128,12 +132,15 @@ class ScoresNotifier extends Notifier<List<Score>> {
       return score;
     }).toList();
   }
+
+  Score? getScoreById(int id) {
+    return state.firstWhere((score) => score.id == id);
+  }
 }
 
 final scoresProvider =
     NotifierProvider<ScoresNotifier, List<Score>>(ScoresNotifier.new);
 
-// useScores Hook을 정의
 ({
   bool sortAsc,
   List<Score> sortedScores,
@@ -141,6 +148,7 @@ final scoresProvider =
   void Function(int id) removeScore,
   void Function(int id, int delta) editScore,
   void Function() toggleSortOrder,
+  Score? Function(int id) getScoreById,
 }) useScores(WidgetRef ref) {
   final scores = ref.watch(scoresProvider);
   final sortAsc = useState(true);
@@ -165,6 +173,10 @@ final scoresProvider =
     return sortAsc.value ? scores : scores.reversed.toList();
   }
 
+  Score? getScoreById(int id) {
+    return ref.read(scoresProvider.notifier).getScoreById(id);
+  }
+
   return (
     sortAsc: sortAsc.value,
     sortedScores: getSortedScores(),
@@ -172,6 +184,7 @@ final scoresProvider =
     removeScore: removeScore,
     editScore: editScore,
     toggleSortOrder: toggleSortOrder,
+    getScoreById: getScoreById,
   );
 }
 
@@ -269,13 +282,7 @@ class ScoreListPage extends HookConsumerWidget {
                                 fontSize: 20,
                               ),
                             ),
-                            Text(
-                              '생성: ${score.createdAt} 수정: ${score.updatedAt}',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
+                            // 생성날짜, 수정날짜 표시 제거
                           ],
                         ),
                       ),
@@ -297,10 +304,70 @@ class ScoreListPage extends HookConsumerWidget {
                         },
                         child: const Text('삭제'),
                       ),
+                      TextButton(
+                        onPressed: () {
+                          context.go('/scores/${score.id}');
+                        },
+                        child: const Text('상세보기'),
+                      ),
                     ],
                   );
                 },
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ScoreDetailPage 클래스 추가
+class ScoreDetailPage extends HookConsumerWidget {
+  final int id;
+
+  const ScoreDetailPage({required this.id, super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scoresResult = useScores(ref);
+    final score = scoresResult.getScoreById(id);
+
+    if (score == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('점수 상세 페이지'),
+        ),
+        body: const Center(
+          child: Text('점수를 찾을 수 없습니다.'),
+        ),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('점수 상세 페이지'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'ID: ${score.id}',
+              style: const TextStyle(fontSize: 24),
+            ),
+            Text(
+              '점수: ${score.content}',
+              style: const TextStyle(fontSize: 24),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              '생성날짜: ${score.createdAt}',
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            Text(
+              '수정날짜: ${score.updatedAt}',
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
             ),
           ],
         ),
