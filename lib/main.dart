@@ -97,6 +97,42 @@ class Score {
   }
 }
 
+class ScoresNotifier extends Notifier<List<Score>> {
+  @override
+  List<Score> build() {
+    return [];
+  }
+
+  // 점수 추가 메서드
+  void addScore(int content) {
+    final newScore = Score(
+      id: ++Score.lastId,
+      content: content,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+    state = [...state, newScore];
+  }
+
+  // 점수 제거 메서드
+  void removeScore(int id) {
+    state = state.where((score) => score.id != id).toList();
+  }
+
+  // 점수 수정 메서드
+  void editScore(int id, int delta) {
+    state = state.map((score) {
+      if (score.id == id) {
+        return delta == 1 ? score.increment() : score.decrement();
+      }
+      return score;
+    }).toList();
+  }
+}
+
+final scoresProvider =
+    NotifierProvider<ScoresNotifier, List<Score>>(ScoresNotifier.new);
+
 // useScores Hook을 정의
 ({
   bool sortAsc,
@@ -105,31 +141,20 @@ class Score {
   void Function(int id) removeScore,
   void Function(int id, int delta) editScore,
   void Function() toggleSortOrder,
-}) useScores() {
-  final scores = useState(<Score>[]);
+}) useScores(WidgetRef ref) {
+  final scores = ref.watch(scoresProvider);
   final sortAsc = useState(true);
 
   void addScore(int content) {
-    final newScore = Score(
-      id: ++Score.lastId,
-      content: content,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-    scores.value = [...scores.value, newScore];
+    ref.read(scoresProvider.notifier).addScore(content);
   }
 
   void removeScore(int id) {
-    scores.value = scores.value.where((score) => score.id != id).toList();
+    ref.read(scoresProvider.notifier).removeScore(id);
   }
 
   void editScore(int id, int delta) {
-    scores.value = scores.value.map((score) {
-      if (score.id == id) {
-        return delta == 1 ? score.increment() : score.decrement();
-      }
-      return score;
-    }).toList();
+    ref.read(scoresProvider.notifier).editScore(id, delta);
   }
 
   void toggleSortOrder() {
@@ -137,7 +162,7 @@ class Score {
   }
 
   List<Score> getSortedScores() {
-    return sortAsc.value ? scores.value : scores.value.reversed.toList();
+    return sortAsc.value ? scores : scores.reversed.toList();
   }
 
   return (
@@ -150,17 +175,17 @@ class Score {
   );
 }
 
-class ScoreListPage extends HookWidget {
+class ScoreListPage extends HookConsumerWidget {
   const ScoreListPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textEditingController = useTextEditingController();
     final focusNode = useFocusNode();
     final scoreFormFieldKey =
         useMemoized(() => GlobalKey<FormFieldState<String>>());
 
-    final scoresResult = useScores();
+    final scoresResult = useScores(ref);
 
     void handleAddScore() {
       if (scoreFormFieldKey.currentState?.validate() == false) {
